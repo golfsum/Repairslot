@@ -1,19 +1,18 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ArrowLeft, CalendarCheck, Check, MapPin, ShieldCheck, Wrench } from 'lucide-react';
 
 const services=['Refrigerator not cooling','Washer leaking','Dryer not heating','Dishwasher not draining'];
 const slots=['Tomorrow, 8–10 AM','Tomorrow, 10 AM–12 PM','Tomorrow, 1–3 PM'];
 
 export default function BookingDemo(){
-  const params=useSearchParams();
-  const embed=params.get('embed')==='1';
+  const [embed,setEmbed]=useState(false);
   const [step,setStep]=useState(1);
   const [service,setService]=useState(services[0]);
   const [slot,setSlot]=useState(slots[0]);
   const [booked,setBooked]=useState(false);
+  useEffect(()=>{setEmbed(new URLSearchParams(window.location.search).get('embed')==='1')},[]);
   return <main className={embed?'bookingPage embedded':'bookingPage'}>
     {!embed&&<header className="bookingTop"><a href="/" className="brand"><span className="brandMark"><Wrench size={16}/></span><span>RepairSlot Demo</span></a><a href="/"><ArrowLeft size={15}/> Back to site</a></header>}
     <section className="bookingShell">
