@@ -4,10 +4,10 @@ import './globals.css';
 export const metadata: Metadata = {
   metadataBase: new URL('https://repairslot.com'),
   title: {
-    default: 'RepairSlot | Online Booking & Scheduling for Repair Businesses',
+    default: 'RepairSlot | Repair Scheduling & Online Booking',
     template: '%s | RepairSlot',
   },
-  description: 'Online booking and scheduling software for repair businesses. Let customers book real service windows 24/7, recover missed calls, and add booking to any website.',
+  description: 'Online booking and scheduling software for repair businesses. Let customers book real service windows 24/7 and recover missed calls.',
   keywords: [
     'repair scheduling software',
     'repair booking software',
