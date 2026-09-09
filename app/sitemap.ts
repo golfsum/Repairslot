@@ -18,11 +18,29 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 1,
     },
+    {
+      url: 'https://repairslot.com/repair-scheduling-software',
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 1,
+    },
+    {
+      url: 'https://repairslot.com/repair-booking-software',
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 1,
+    },
     ...industryPages.map((slug) => ({
       url: `https://repairslot.com/${slug}`,
       lastModified: now,
       changeFrequency: 'weekly' as const,
       priority: 0.9,
     })),
+    {
+      url: 'https://repairslot.com/tools/missed-call-revenue-calculator',
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
   ];
 }
