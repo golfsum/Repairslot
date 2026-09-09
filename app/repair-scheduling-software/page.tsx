@@ -1,0 +1,19 @@
+import type { Metadata } from 'next';
+import { CalendarCheck, Check, Clock3, Globe2, PhoneMissed, Wrench } from 'lucide-react';
+
+export const metadata: Metadata = {
+  title: { absolute: 'Repair Scheduling Software | RepairSlot' },
+  description: 'Repair scheduling software that lets customers book real service windows online. Add hosted booking, website embeds, reminders, and missed-call recovery.',
+  alternates: { canonical: '/repair-scheduling-software' },
+};
+
+export default function Page(){
+  return <main className="seoPage">
+    <header className="nav shell"><a className="brand" href="/"><span className="brandMark"><Wrench size={18}/></span><span>RepairSlot</span></a><nav><a href="/#pricing">Pricing</a><a className="button buttonSmall" href="/book/demo">Try demo</a></nav></header>
+    <section className="seoHero shell"><div className="eyebrow">Repair scheduling software</div><h1>Schedule repair jobs without the callback loop.</h1><p>RepairSlot gives repair businesses a customer-facing booking layer for real service windows, repair-specific intake, missed-call recovery, reminders, and website booking.</p><div className="heroActions"><a className="button" href="/book/demo">Try live booking demo</a><a className="ghostButton" href="/#pricing">See pricing</a></div></section>
+    <section className="seoStrip"><div className="shell seoBenefits"><div><Clock3/><strong>24/7 scheduling</strong><span>Customers can book after hours.</span></div><div><PhoneMissed/><strong>Recover missed calls</strong><span>Turn missed calls into booking links.</span></div><div><Globe2/><strong>Website booking</strong><span>Hosted page, inline embed, or widget.</span></div><div><CalendarCheck/><strong>Real service windows</strong><span>Show availability that fits the job.</span></div></div></section>
+    <section className="section shell seoTwoCol"><div><div className="eyebrow">Made for repair work</div><h2>A repair appointment is more than an empty calendar slot.</h2><p>Before a time is shown, RepairSlot can collect the repair type, service address, duration and other details your team needs. That makes it a better fit for field repairs than a generic meeting scheduler.</p><ul className="seoChecklist"><li><Check/> Repair-specific intake</li><li><Check/> Service-area validation</li><li><Check/> Technician and duration-aware windows</li><li><Check/> Booking confirmations and reminders</li><li><Check/> Existing website integration</li></ul></div><div className="seoExampleCard"><span>Customer experience</span><h3>Book a repair</h3><div className="seoExample">What needs repair?</div><div className="seoExample">Where should we go?</div><div className="seoExample">Choose a service window</div><div className="seoWindow"><strong>Confirmed</strong><span>Tomorrow · 10 AM–12 PM</span></div></div></section>
+    <section className="section industrySection"><div className="shell"><div className="sectionIntro narrow"><div className="eyebrow">Popular repair industries</div><h2>One platform, repair-specific workflows.</h2></div><div className="industryGrid"><a className="industry" href="/appliance-repair-scheduling-software">Appliance repair</a><a className="industry" href="/garage-door-repair-scheduling-software">Garage door repair</a><a className="industry" href="/mobile-mechanic-scheduling-software">Mobile mechanics</a><a className="industry" href="/hvac-repair-scheduling-software">HVAC repair</a><a className="industry" href="/plumbing-repair-scheduling-software">Plumbing repair</a><a className="industry" href="/handyman-scheduling-software">Handyman</a></div></div></section>
+    <section className="cta"><div className="shell ctaInner"><div><div className="eyebrow light">Turn ready-to-hire visitors into booked jobs.</div><h2>Add repair scheduling to your website.</h2></div><a className="button lightButton" href="/book/demo">Try RepairSlot</a></div></section>
+  </main>
+}
