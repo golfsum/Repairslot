@@ -1,46 +1,15 @@
-import type { MetadataRoute } from 'next';
+import type {MetadataRoute} from 'next';
+import {allTopLevelSlugs} from '../lib/seo-library';
+import {tools} from '../lib/tool-library';
 
-const industryPages = [
-  'appliance-repair-scheduling-software',
-  'garage-door-repair-scheduling-software',
-  'mobile-mechanic-scheduling-software',
-  'hvac-repair-scheduling-software',
-  'plumbing-repair-scheduling-software',
-  'handyman-scheduling-software',
-];
-
-export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
-  return [
-    {
-      url: 'https://repairslot.com/',
-      lastModified: now,
-      changeFrequency: 'weekly',
-      priority: 1,
-    },
-    {
-      url: 'https://repairslot.com/repair-scheduling-software',
-      lastModified: now,
-      changeFrequency: 'weekly',
-      priority: 1,
-    },
-    {
-      url: 'https://repairslot.com/repair-booking-software',
-      lastModified: now,
-      changeFrequency: 'weekly',
-      priority: 1,
-    },
-    ...industryPages.map((slug) => ({
-      url: `https://repairslot.com/${slug}`,
-      lastModified: now,
-      changeFrequency: 'weekly' as const,
-      priority: 0.9,
-    })),
-    {
-      url: 'https://repairslot.com/tools/missed-call-revenue-calculator',
-      lastModified: now,
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-  ];
+export default function sitemap():MetadataRoute.Sitemap{
+ const now=new Date();
+ const top=[...new Set(['repair-scheduling-software','repair-booking-software',...allTopLevelSlugs])];
+ const toolSlugs=['missed-call-revenue-calculator',...tools.map(x=>x.slug)];
+ return [
+  {url:'https://repairslot.com/',lastModified:now,changeFrequency:'weekly',priority:1},
+  {url:'https://repairslot.com/resources',lastModified:now,changeFrequency:'weekly',priority:.9},
+  ...top.map(slug=>({url:`https://repairslot.com/${slug}`,lastModified:now,changeFrequency:'monthly' as const,priority:.8})),
+  ...toolSlugs.map(slug=>({url:`https://repairslot.com/tools/${slug}`,lastModified:now,changeFrequency:'monthly' as const,priority:.75}))
+ ];
 }
