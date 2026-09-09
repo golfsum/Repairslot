@@ -141,15 +141,15 @@ export default function Home() {
         </div>
         <div className="pricingGrid">
           {[
-            {name:'Starter', price:'$49', desc:'For solo repair businesses', features:['1 technician','Booking page + widget','Service windows','Email confirmations']},
-            {name:'Pro', price:'$99', desc:'For growing repair teams', featured:true, features:['Up to 5 technicians','Missed-call text back','Abandoned booking recovery','SMS + email reminders','Deposits and analytics']},
-            {name:'Business', price:'$199', desc:'For larger teams and locations', features:['Unlimited technicians','Multiple locations','Advanced routing rules','Priority support','Custom automations']},
+            {name:'Starter', price:'$49', desc:'For solo repair businesses', href:'https://buy.stripe.com/test_14AaEQgLLgJ244S96ScMM00', features:['1 technician','Booking page + widget','Service windows','Email confirmations']},
+            {name:'Pro', price:'$99', desc:'For growing repair teams', featured:true, href:'https://buy.stripe.com/test_7sY7sEbrr0K444SgzkcMM01', features:['Up to 5 technicians','Missed-call text back','Abandoned booking recovery','SMS + email reminders','Deposits and analytics']},
+            {name:'Business', price:'$199', desc:'For larger teams and locations', href:'https://buy.stripe.com/test_3cIbIUbrr78satg4QCcMM02', features:['Unlimited technicians','Multiple locations','Advanced routing rules','Priority support','Custom automations']},
           ].map((plan) => (
             <article className={plan.featured ? 'priceCard featured' : 'priceCard'} key={plan.name}>
               {plan.featured && <div className="popular">Most popular</div>}
               <h3>{plan.name}</h3><p>{plan.desc}</p>
               <div className="price"><strong>{plan.price}</strong><span>/month</span></div>
-              <a className={plan.featured ? 'button full' : 'ghostButton full'} href="mailto:hello@repairslot.com?subject=RepairSlot early access">Start early access</a>
+              <a className={plan.featured ? 'button full' : 'ghostButton full'} href={plan.href}>Start test checkout</a>
               <ul>{plan.features.map(f => <li key={f}><Check size={15} /> {f}</li>)}</ul>
             </article>
           ))}
@@ -159,7 +159,7 @@ export default function Home() {
       <section className="cta">
         <div className="shell ctaInner">
           <div><div className="eyebrow light">Repair jobs should not wait for a callback.</div><h2>Let customers book the repair while they are ready to hire.</h2></div>
-          <a className="button lightButton" href="mailto:hello@repairslot.com?subject=RepairSlot early access">Get early access <ArrowRight size={17} /></a>
+          <a className="button lightButton" href="#pricing">Choose a plan <ArrowRight size={17} /></a>
         </div>
       </section>
 
