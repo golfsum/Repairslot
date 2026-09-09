@@ -3,7 +3,14 @@
 import { useState } from 'react';
 import { ArrowRight, CalendarCheck, Check, Clock3, Code2, ExternalLink, Globe2, MonitorSmartphone, PhoneMissed, Play, ShieldCheck, Wrench } from 'lucide-react';
 
-const repairTypes = ['Appliance Repair', 'Garage Door Repair', 'Mobile Mechanic', 'HVAC Repair', 'Plumbing Repair', 'Handyman'];
+const repairTypes = [
+  ['Appliance Repair','/appliance-repair-scheduling-software'],
+  ['Garage Door Repair','/garage-door-repair-scheduling-software'],
+  ['Mobile Mechanic','/mobile-mechanic-scheduling-software'],
+  ['HVAC Repair','/hvac-repair-scheduling-software'],
+  ['Plumbing Repair','/plumbing-repair-scheduling-software'],
+  ['Handyman','/handyman-scheduling-software'],
+] as const;
 const services = ['Refrigerator not cooling', 'Washer leaking', 'Dryer not heating', 'Dishwasher not draining'];
 const slots = ['Tomorrow, 8–10 AM', 'Tomorrow, 10 AM–12 PM', 'Tomorrow, 1–3 PM'];
 const checkout: Record<string, string> = {
@@ -65,7 +72,7 @@ export default function Home() {
 
       <section className="section videoSection"><div className="shell videoCard"><div><div className="eyebrow lightBlue">60-second product tour</div><h2>See the whole customer journey.</h2><p>From “my refrigerator stopped cooling” to a confirmed service window, plus how the business adds the hosted page, inline embed and widget.</p><div className="videoNote">Narration spec: warm, natural U.S. voice, conversational pacing, no synthetic announcer tone.</div></div><div className="videoPlaceholder"><span className="playCircle"><Play fill="currentColor"/></span><strong>RepairSlot product tour</strong><small>Voice-over version will sit here once the recorded narration asset is available.</small></div></div></section>
 
-      <section className="section industrySection"><div className="shell"><div className="sectionIntro narrow"><div className="eyebrow">Repair-specific templates</div><h2>Start with the repairs you already do.</h2></div><div className="industryGrid">{repairTypes.map(type=><div className="industry" key={type}><Wrench size={18}/><span>{type}</span></div>)}</div></div></section>
+      <section className="section industrySection"><div className="shell"><div className="sectionIntro narrow"><div className="eyebrow">Repair-specific templates</div><h2>Start with the repairs you already do.</h2></div><div className="industryGrid">{repairTypes.map(([type,href])=><a className="industry" href={href} key={type}><Wrench size={18}/><span>{type}</span><ArrowRight size={15}/></a>)}</div></div></section>
 
       <section className="section shell" id="pricing"><div className="sectionIntro narrow"><div className="eyebrow">Simple pricing</div><h2>Priced to pay for itself with one recovered job.</h2></div><div className="pricingGrid">{[
         {name:'Starter',price:'$49',desc:'For solo repair businesses',features:['1 technician','Hosted booking page','Inline embed + widget','Calendar sync','Email/SMS reminders']},
