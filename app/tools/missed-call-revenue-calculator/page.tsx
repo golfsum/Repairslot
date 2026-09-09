@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Wrench } from 'lucide-react';
 import Calculator from './Calculator';
+import './styles.css';
 
 export const metadata: Metadata = {
   title: { absolute: 'Missed Call Revenue Calculator for Repair Businesses' },
