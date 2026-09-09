@@ -1,0 +1,18 @@
+import type { Metadata } from 'next';
+import { Check, Code2, Globe2, MonitorSmartphone, Wrench } from 'lucide-react';
+
+export const metadata: Metadata = {
+  title: { absolute: 'Repair Booking Software | RepairSlot' },
+  description: 'Repair booking software for local repair businesses. Let customers book online from a hosted page, inline website embed, or floating booking widget.',
+  alternates: { canonical: '/repair-booking-software' },
+};
+
+export default function Page(){
+  return <main className="seoPage">
+    <header className="nav shell"><a className="brand" href="/"><span className="brandMark"><Wrench size={18}/></span><span>RepairSlot</span></a><nav><a href="/#pricing">Pricing</a><a className="button buttonSmall" href="/book/demo">Try demo</a></nav></header>
+    <section className="seoHero shell"><div className="eyebrow">Repair booking software</div><h1>Let customers actually book the repair online.</h1><p>Replace “request an appointment” forms with a booking flow that collects the repair first and then shows real service windows customers can reserve.</p><div className="heroActions"><a className="button" href="/book/demo">Try live booking demo</a><a className="ghostButton" href="/#install">See install options</a></div></section>
+    <section className="section shell"><div className="sectionIntro"><div className="eyebrow">Three ways to book</div><h2>Use RepairSlot without rebuilding your website.</h2><p>Every business can use the same services, availability and repair rules across a hosted booking page, inline booking page, and floating website widget.</p></div><div className="installGrid"><article className="installCard"><span className="installIcon"><Globe2/></span><h3>Hosted booking page</h3><p>Share a direct booking URL from Google Business Profile, email, text messages, QR codes, or social media.</p></article><article className="installCard"><span className="installIcon"><MonitorSmartphone/></span><h3>Inline booking page</h3><p>Put the full booking flow directly inside a Book Online page on your existing website.</p></article><article className="installCard"><span className="installIcon"><Code2/></span><h3>Floating booking widget</h3><p>Add one script and give every website page a persistent Book a Repair button.</p></article></div></section>
+    <section className="section industrySection"><div className="shell seoTwoCol"><div><div className="eyebrow">Why repair-specific booking?</div><h2>Customers know what is broken before they know what time they want.</h2><p>A repair booking flow should collect service details before presenting the calendar. RepairSlot is structured around that sequence instead of treating every repair like a generic 30-minute meeting.</p><ul className="seoChecklist"><li><Check/> Collect repair type and symptoms</li><li><Check/> Check service area</li><li><Check/> Show relevant service windows</li><li><Check/> Send confirmation and reminders</li><li><Check/> Recover abandoned bookings</li></ul></div><div className="seoExampleCard"><span>Example flow</span><h3>Book online</h3><div className="seoExample">1. Choose repair</div><div className="seoExample">2. Add service address</div><div className="seoExample">3. Pick a real appointment window</div><div className="seoWindow"><strong>Done</strong><span>No callback required</span></div></div></div></section>
+    <section className="cta"><div className="shell ctaInner"><div><div className="eyebrow light">Booking should end with a booking.</div><h2>Give repair customers a real appointment online.</h2></div><a className="button lightButton" href="/book/demo">Try RepairSlot</a></div></section>
+  </main>
+}
