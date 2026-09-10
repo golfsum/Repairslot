@@ -34,30 +34,11 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-const softwareSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'SoftwareApplication',
-  name: 'RepairSlot',
-  url: 'https://repairslot.com',
-  applicationCategory: 'BusinessApplication',
-  operatingSystem: 'Web',
-  description: 'Online booking and scheduling software for repair businesses.',
-  offers: [
-    { '@type': 'Offer', price: '49', priceCurrency: 'USD', category: 'Starter' },
-    { '@type': 'Offer', price: '99', priceCurrency: 'USD', category: 'Pro' },
-    { '@type': 'Offer', price: '199', priceCurrency: 'USD', category: 'Business' },
-  ],
-};
-
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
       <body>
         {children}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareSchema) }}
-        />
       </body>
     </html>
   );

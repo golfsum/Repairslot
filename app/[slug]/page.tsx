@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Check, Clock3, Globe2, MessageSquareText, PhoneMissed, Wrench } from 'lucide-react';
 import { industries, resourcePages, allTopLevelSlugs } from '../../lib/seo-library';
+import {tools} from '../../lib/tool-library';
 
 export function generateStaticParams(){ return allTopLevelSlugs.map(slug=>({slug})); }
 
@@ -15,14 +16,24 @@ export async function generateMetadata({params}:{params:Promise<{slug:string}>})
   if(page){
     return {title:{absolute:`${page.title} | RepairSlot`},description:page.description,alternates:{canonical:`/${slug}`},openGraph:{title:`${page.title} | RepairSlot`,description:page.intro,url:`https://repairslot.com/${slug}`}};
   }
-  return {};
+  notFound();
 }
 
 function Header(){return <header className="nav shell"><a className="brand" href="/"><span className="brandMark"><Wrench size={18}/></span><span>RepairSlot</span></a><nav><a href="/resources">Resources</a><a href="/#pricing">Pricing</a><a className="button buttonSmall" href="/book/demo">Try demo</a></nav></header>}
 
 function Related({current}:{current:string}){
-  const related=[...industries.slice(0,6).map(x=>({slug:x.slug,title:x.name})),...resourcePages.filter(x=>['commercial','feature'].includes(x.kind)).slice(0,6).map(x=>({slug:x.slug,title:x.title}))].filter(x=>x.slug!==current).slice(0,6);
-  return <section className="section shell"><div className="sectionIntro narrow"><div className="eyebrow">Related RepairSlot resources</div><h2>Keep improving the booking path.</h2></div><div className="industryGrid">{related.map(x=><a className="industry" href={`/${x.slug}`} key={x.slug}><Wrench size={17}/><span>{x.title}</span></a>)}</div></section>
+  const stop=new Set(['repair','repairs','business','businesses','software','booking','scheduling','service','services','online','for','how','to','vs']);
+  const words=(value:string)=>new Set(value.toLowerCase().split(/[^a-z0-9]+/).filter(x=>x.length>2&&!stop.has(x)));
+  const currentTitle=industries.find(x=>x.slug===current)?.name||resourcePages.find(x=>x.slug===current)?.title||current;
+  const currentWords=words(`${current} ${currentTitle}`);
+  const pool=[
+    ...industries.map(x=>({path:`/${x.slug}`,title:x.name,kind:'industry'})),
+    ...resourcePages.map(x=>({path:`/${x.slug}`,title:x.title,kind:x.kind})),
+    ...tools.map(x=>({path:`/tools/${x.slug}`,title:x.title,kind:'tool'}))
+  ].filter(x=>x.path!==`/${current}`);
+  const seed=[...current].reduce((sum,char)=>sum+char.charCodeAt(0),0);
+  const related=pool.map((x,index)=>({...x,index,score:[...words(`${x.path} ${x.title}`)].filter(word=>currentWords.has(word)).length*100+((index+seed)%pool.length)})).sort((a,b)=>b.score-a.score).slice(0,6);
+  return <section className="section shell"><div className="sectionIntro narrow"><div className="eyebrow">Related RepairSlot resources</div><h2>Keep improving the booking path.</h2></div><div className="industryGrid">{related.map(x=><a className="industry" href={x.path} key={x.path}><Wrench size={17}/><span>{x.title}</span></a>)}</div><p><a href="/resources">Browse all repair business resources and calculators</a></p></section>
 }
 
 export default async function SeoPage({params}:{params:Promise<{slug:string}>}){

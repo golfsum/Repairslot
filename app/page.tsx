@@ -18,6 +18,7 @@ const checkout: Record<string, string> = {
   Pro: 'https://buy.stripe.com/test_7sY7sEbrr0K444SgzkcMM01',
   Business: 'https://buy.stripe.com/test_3cIbIUbrr78satg4QCcMM02',
 };
+const softwareSchema={'@context':'https://schema.org','@type':'SoftwareApplication',name:'RepairSlot',url:'https://repairslot.com',applicationCategory:'BusinessApplication',operatingSystem:'Web',description:'Online booking and scheduling software for repair businesses.',offers:[{'@type':'Offer',price:'49',priceCurrency:'USD',category:'Starter'},{'@type':'Offer',price:'99',priceCurrency:'USD',category:'Pro'},{'@type':'Offer',price:'199',priceCurrency:'USD',category:'Business'}]};
 
 export default function Home() {
   const [step, setStep] = useState(1);
@@ -29,7 +30,7 @@ export default function Home() {
     <main>
       <header className="nav shell">
         <a className="brand" href="#top"><span className="brandMark"><Wrench size={18}/></span><span>RepairSlot</span></a>
-        <nav><a href="#install">Install</a><a href="#how">How it works</a><a href="#pricing">Pricing</a><a className="button buttonSmall" href="/book/demo">Try live demo</a></nav>
+        <nav><a href="#install">Install</a><a href="#how">How it works</a><a href="/resources">Resources</a><a href="#pricing">Pricing</a><a className="button buttonSmall" href="/book/demo">Try live demo</a></nav>
       </header>
 
       <section className="hero shell" id="top">
@@ -81,7 +82,8 @@ export default function Home() {
       ].map(plan=><article className={plan.featured?'priceCard featured':'priceCard'} key={plan.name}>{plan.featured&&<div className="popular">Most popular</div>}<h3>{plan.name}</h3><p>{plan.desc}</p><div className="price"><strong>{plan.price}</strong><span>/month</span></div><a className={plan.featured?'button full':'ghostButton full'} href={checkout[plan.name]}>Start test checkout</a><ul>{plan.features.map(f=><li key={f}><Check size={15}/>{f}</li>)}</ul></article>)}</div></section>
 
       <section className="cta"><div className="shell ctaInner"><div><div className="eyebrow light">Repair jobs should not wait for a callback.</div><h2>Let customers book while they are ready to hire.</h2></div><a className="button lightButton" href="/book/demo">Try the demo <ArrowRight size={17}/></a></div></section>
-      <footer className="footer shell"><div className="brand"><span className="brandMark"><Wrench size={16}/></span><span>RepairSlot</span></div><span>Hosted page · Inline embed · Website widget</span></footer>
+      <footer className="footer shell"><div className="brand"><span className="brandMark"><Wrench size={16}/></span><span>RepairSlot</span></div><a href="/repair-scheduling-software">Repair scheduling software</a><a href="/repair-booking-software">Repair booking software</a><a href="/resources">Resources and calculators</a></footer>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(softwareSchema)}}/>
     </main>
   );
 }
