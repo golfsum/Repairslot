@@ -15,7 +15,12 @@ export async function generateMetadata({params}:{params:Promise<{slug:string}>})
       const description='Evaluate appliance repair scheduling software with a practical checklist and sample booking demo. The demo does not reserve a technician appointment.';
       return {title:{absolute:title},description,alternates:{canonical:`/${slug}`},openGraph:{title,description,url:`https://repairslot.com/${slug}`}};
     }
-    return {title:{absolute:`${industry.name} | RepairSlot`},description:`${industry.name} for ${industry.audience}. ${industry.intro}`,alternates:{canonical:`/${slug}`},openGraph:{title:`${industry.name} | RepairSlot`,description:industry.intro,url:`https://repairslot.com/${slug}`}};
+    const industryDescriptions: Record<string,string> = {
+      'garage-door-repair-scheduling-software':'Book broken springs, opener failures, off-track doors and estimates with scheduling software for garage door repair companies.',
+      'small-engine-repair-scheduling-software':'Schedule mower, generator, pressure-washer and small-engine diagnostics online with useful repair details collected up front.'
+    };
+    const description=industryDescriptions[slug]??`${industry.name} for ${industry.audience}. ${industry.intro}`;
+    return {title:{absolute:`${industry.name} | RepairSlot`},description,alternates:{canonical:`/${slug}`},openGraph:{title:`${industry.name} | RepairSlot`,description,url:`https://repairslot.com/${slug}`}};
   }
   const page=resourcePages.find(x=>x.slug===slug);
   if(page){
