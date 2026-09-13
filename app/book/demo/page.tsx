@@ -16,7 +16,7 @@ export default function BookingDemo(){
   return <main className={embed?'bookingPage embedded':'bookingPage'}>
     {!embed&&<header className="bookingTop"><a href="/" className="brand"><span className="brandMark"><Wrench size={16}/></span><span>RepairSlot Demo</span></a><a href="/"><ArrowLeft size={15}/> Back to site</a></header>}
     <section className="bookingShell">
-      <div className="businessIntro"><div className="businessLogo"><Wrench/></div><div><h1>Sunset Appliance Repair</h1><p>Tucson, AZ · Same-day and next-day service</p></div></div>
+      <div className="businessIntro"><div className="businessLogo"><Wrench/></div><div><h1>Sunset Appliance Repair</h1><p>Interactive sample only · No technician appointment will be created</p></div></div>
       <div className="bookingCard">
         <div className="bookingCardHead"><strong>Book a repair</strong><span>Step {Math.min(step,3)} of 3</span></div>
         {!booked&&step===1&&<div className="bookingBody"><h2>What needs repair?</h2><p>Select the closest match. A technician can confirm the exact issue on site.</p><div className="bookingChoices">{services.map(x=><button className={service===x?'bookingChoice selected':'bookingChoice'} key={x} onClick={()=>setService(x)}>{x}</button>)}</div><button className="button full" onClick={()=>setStep(2)}>Continue</button></div>}
