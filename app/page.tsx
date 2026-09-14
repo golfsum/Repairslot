@@ -14,9 +14,9 @@ const repairTypes = [
 const services = ['Refrigerator not cooling', 'Washer leaking', 'Dryer not heating', 'Dishwasher not draining'];
 const slots = ['Tomorrow, 8–10 AM', 'Tomorrow, 10 AM–12 PM', 'Tomorrow, 1–3 PM'];
 const checkout: Record<string, string> = {
-  Starter: 'https://buy.stripe.com/test_14AaEQgLLgJ244S96ScMM00',
-  Pro: 'https://buy.stripe.com/test_7sY7sEbrr0K444SgzkcMM01',
-  Business: 'https://buy.stripe.com/test_3cIbIUbrr78satg4QCcMM02',
+  Starter: process.env.NEXT_PUBLIC_STRIPE_STARTER_CHECKOUT || '',
+  Pro: process.env.NEXT_PUBLIC_STRIPE_PRO_CHECKOUT || '',
+  Business: process.env.NEXT_PUBLIC_STRIPE_BUSINESS_CHECKOUT || '',
 };
 const softwareSchema={'@context':'https://schema.org','@type':'SoftwareApplication',name:'RepairSlot',url:'https://repairslot.com',applicationCategory:'BusinessApplication',operatingSystem:'Web',description:'Online booking and scheduling software for repair businesses.',offers:[{'@type':'Offer',price:'49',priceCurrency:'USD',category:'Starter'},{'@type':'Offer',price:'99',priceCurrency:'USD',category:'Pro'},{'@type':'Offer',price:'199',priceCurrency:'USD',category:'Business'}]};
 
@@ -79,7 +79,7 @@ export default function Home() {
         {name:'Starter',price:'$49',desc:'For solo repair businesses',features:['1 technician','Hosted booking page','Inline embed + widget','Calendar sync','Email/SMS reminders']},
         {name:'Pro',price:'$99',desc:'For growing repair teams',featured:true,features:['Up to 5 technicians','Everything in Starter','Missed-call text-back','Abandoned booking recovery','Deposits + analytics']},
         {name:'Business',price:'$199',desc:'For larger teams and locations',features:['Unlimited technicians','Multiple locations','Route-aware scheduling','Advanced automations','Priority support']},
-      ].map(plan=><article className={plan.featured?'priceCard featured':'priceCard'} key={plan.name}>{plan.featured&&<div className="popular">Most popular</div>}<h3>{plan.name}</h3><p>{plan.desc}</p><div className="price"><strong>{plan.price}</strong><span>/month</span></div><a className={plan.featured?'button full':'ghostButton full'} href={checkout[plan.name]}>Start test checkout</a><ul>{plan.features.map(f=><li key={f}><Check size={15}/>{f}</li>)}</ul></article>)}</div></section>
+      ].map(plan=><article className={plan.featured?'priceCard featured':'priceCard'} key={plan.name}>{plan.featured&&<div className="popular">Most popular</div>}<h3>{plan.name}</h3><p>{plan.desc}</p><div className="price"><strong>{plan.price}</strong><span>/month</span></div>{checkout[plan.name] ? <a className={plan.featured?'button full':'ghostButton full'} href={checkout[plan.name]}>Start subscription</a> : <span className={plan.featured?'button full':'ghostButton full'} aria-disabled="true">Checkout activating</span>}<ul>{plan.features.map(f=><li key={f}><Check size={15}/>{f}</li>)}</ul></article>)}</div></section>
 
       <section className="cta"><div className="shell ctaInner"><div><div className="eyebrow light">Repair jobs should not wait for a callback.</div><h2>Let customers book while they are ready to hire.</h2></div><a className="button lightButton" href="/book/demo">Try the demo <ArrowRight size={17}/></a></div></section>
       <footer className="footer shell"><div className="brand"><span className="brandMark"><Wrench size={16}/></span><span>RepairSlot</span></div><a href="/repair-scheduling-software">Repair scheduling software</a><a href="/repair-booking-software">Repair booking software</a><a href="/resources">Resources and calculators</a></footer>
