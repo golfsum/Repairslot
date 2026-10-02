@@ -37,7 +37,7 @@ export default async function AdminPage() {
       <div style={{maxWidth:1180,margin:'0 auto'}}>
         <div style={{display:'flex',justifyContent:'space-between',gap:20,alignItems:'center',marginBottom:28}}>
           <div><div style={{fontSize:13,fontWeight:700,textTransform:'uppercase',letterSpacing:1,color:'#557'}}>RepairSlot Admin</div><h1 style={{margin:'6px 0 0',fontSize:34}}>Operations dashboard</h1></div>
-          <Link href="/" style={{textDecoration:'none',color:'#172033',fontWeight:700}}>View site →</Link>
+          <Link href="/admin/booking" style={{textDecoration:'none',color:'#172033',fontWeight:700}}>Booking operations →</Link>
         </div>
 
         {!snapshot.configured && <div style={{padding:18,border:'1px solid #e6b96a',background:'#fff8e8',borderRadius:14,marginBottom:22}}><strong>Stripe server access needs configuration.</strong><div style={{marginTop:6}}>Add <code>STRIPE_SECRET_KEY</code> in Vercel. Admin authentication also uses <code>ADMIN_PASSWORD</code>.</div>{error && <div style={{marginTop:6}}>Stripe error: {error}</div>}</div>}

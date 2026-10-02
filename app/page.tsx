@@ -13,13 +13,6 @@ const repairTypes = [
 ] as const;
 const services = ['Refrigerator not cooling', 'Washer leaking', 'Dryer not heating', 'Dishwasher not draining'];
 const slots = ['Tomorrow, 8–10 AM', 'Tomorrow, 10 AM–12 PM', 'Tomorrow, 1–3 PM'];
-const checkout: Record<string, string> = {
-  Starter: process.env.NEXT_PUBLIC_STRIPE_STARTER_CHECKOUT || '',
-  Pro: process.env.NEXT_PUBLIC_STRIPE_PRO_CHECKOUT || '',
-  Business: process.env.NEXT_PUBLIC_STRIPE_BUSINESS_CHECKOUT || '',
-};
-const softwareSchema={'@context':'https://schema.org','@type':'SoftwareApplication',name:'RepairSlot',url:'https://repairslot.com',applicationCategory:'BusinessApplication',operatingSystem:'Web',description:'Online booking and scheduling software for repair businesses.',offers:[{'@type':'Offer',price:'49',priceCurrency:'USD',category:'Starter'},{'@type':'Offer',price:'99',priceCurrency:'USD',category:'Pro'},{'@type':'Offer',price:'199',priceCurrency:'USD',category:'Business'}]};
-
 export default function Home() {
   const [step, setStep] = useState(1);
   const [service, setService] = useState(services[0]);
@@ -32,6 +25,8 @@ export default function Home() {
         <a className="brand" href="#top"><span className="brandMark"><Wrench size={18}/></span><span>RepairSlot</span></a>
         <nav><a href="#install">Install</a><a href="#how">How it works</a><a href="/resources">Resources</a><a href="#pricing">Pricing</a><a className="button buttonSmall" href="/book/demo">Try live demo</a></nav>
       </header>
+
+      <div className="shell setupNotice"><strong>Explore RepairSlot while live setup is in progress.</strong><p>The public demo uses sample data. Live booking requires business activation. Missed-call texts require provider setup and caller consent. <a href="/readiness">See what is available</a></p></div>
 
       <section className="hero shell" id="top">
         <div className="heroCopy">
@@ -51,10 +46,10 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="problemBand"><div className="shell metrics"><div><span className="metricIcon"><PhoneMissed/></span><strong>Missed call?</strong><p>Text the customer a booking link automatically.</p></div><div><span className="metricIcon"><Clock3/></span><strong>After hours?</strong><p>Customers can still reserve an actual service window.</p></div><div><span className="metricIcon"><CalendarCheck/></span><strong>No callback loop.</strong><p>Show availability and confirm the job while intent is high.</p></div></div></section>
+      <section className="problemBand"><div className="shell metrics"><div><span className="metricIcon"><PhoneMissed/></span><strong>Missed call?</strong><p>With provider setup and caller consent, send a booking link after an unanswered call.</p></div><div><span className="metricIcon"><Clock3/></span><strong>After hours?</strong><p>Activated businesses can accept bookings in their configured service windows.</p></div><div><span className="metricIcon"><CalendarCheck/></span><strong>No callback loop.</strong><p>Show configured availability and save the appointment after setup.</p></div></div></section>
 
       <section className="section shell" id="install">
-        <div className="sectionIntro"><div className="eyebrow">Put it anywhere</div><h2>One booking system. Three ways customers can use it.</h2><p>Every RepairSlot business gets a hosted booking page plus website install options. The same services, hours, technicians and availability power all three.</p></div>
+        <div className="sectionIntro"><div className="eyebrow">Put it anywhere</div><h2>One booking system. Three ways customers can use it.</h2><p>After operator setup, businesses can use a hosted booking page, inline embed, or website widget. Services, service-area ZIP codes and technician availability power the booking flow.</p></div>
         <div className="installGrid">
           <article className="installCard"><span className="installIcon"><Globe2/></span><h3>Hosted booking page</h3><p>Share a link like <strong>repairslot.com/book/your-shop</strong> in Google Business Profile, texts, email, social media or QR codes.</p><a href="/book/demo">Open demo page <ExternalLink size={15}/></a></article>
           <article className="installCard featuredInstall"><span className="installIcon"><MonitorSmartphone/></span><h3>Full page on your site</h3><p>Embed the complete booking experience inside <strong>yourdomain.com/book</strong> so customers never feel like they left your website.</p><a href="/embed-demo">View live embedded example <ExternalLink size={15}/></a><div className="miniBrowser"><div className="browserBar"><i/><i/><i/><span>abc-repair.com/book</span></div><div className="browserBody"><strong>Book a repair</strong><div className="fakeInput">What needs repair?</div><div className="fakeInput">Choose a time</div><div className="fakeButton">Continue</div></div></div></article>
@@ -69,7 +64,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section shell" id="how"><div className="sectionIntro"><div className="eyebrow">How it works</div><h2>Built around a repair job, not an empty calendar.</h2><p>RepairSlot asks what is broken first, then shows only times that fit the job, service area and technician availability.</p></div><div className="steps">{[['1','Customer describes the repair','Use repair-specific questions instead of a generic meeting type.'],['2','RepairSlot finds valid availability','Match duration, hours, technician availability and service area.'],['3','The job gets booked','Confirm instantly, send reminders and recover abandoned bookings.']].map(([n,t,x])=><article className="step" key={n}><span>{n}</span><h3>{t}</h3><p>{x}</p></article>)}</div></section>
+      <section className="section shell" id="how"><div className="sectionIntro"><div className="eyebrow">How it works</div><h2>Built around a repair job, not an empty calendar.</h2><p>RepairSlot asks what is broken first, then shows only times that fit the job, service area and technician availability.</p></div><div className="steps">{[['1','Customer describes the repair','Use repair-specific questions instead of a generic meeting type.'],['2','RepairSlot finds valid availability','Match duration, hours, technician availability and service area.'],['3','The job gets booked','Save the appointment and provide a private link to view or cancel it. Reminders and abandoned-booking recovery are not available.']].map(([n,t,x])=><article className="step" key={n}><span>{n}</span><h3>{t}</h3><p>{x}</p></article>)}</div></section>
 
       <section className="section tourSection" aria-labelledby="tour-title"><div className="shell tourLayout">
         <div className="tourCopy"><div className="eyebrow lightBlue">Explore the booking demo</div><h2 id="tour-title">Take a repair request from problem to service window.</h2><p>Try the customer experience for a sample appliance repair business. Choose a repair, review a sample address, and pick an appointment window.</p><ol className="tourSteps"><li><span>1</span>Choose what needs repair</li><li><span>2</span>Review the service address</li><li><span>3</span>Pick a sample service window</li></ol><a className="button" href="/book/demo">Try the demo <ArrowRight size={17}/></a><p className="tourDisclaimer">No signup needed. Sample data only. No real appointment is created.</p></div>
@@ -78,15 +73,15 @@ export default function Home() {
 
       <section className="section industrySection"><div className="shell"><div className="sectionIntro narrow"><div className="eyebrow">Repair-specific templates</div><h2>Start with the repairs you already do.</h2></div><div className="industryGrid">{repairTypes.map(([type,href])=><a className="industry" href={href} key={type}><Wrench size={18}/><span>{type}</span><ArrowRight size={15}/></a>)}</div></div></section>
 
-      <section className="section shell" id="pricing"><div className="sectionIntro narrow"><div className="eyebrow">Simple pricing</div><h2>Priced to pay for itself with one recovered job.</h2></div><div className="pricingGrid">{[
-        {name:'Starter',price:'$49',desc:'For solo repair businesses',features:['1 technician','Hosted booking page','Inline embed + widget','Calendar sync','Email/SMS reminders']},
-        {name:'Pro',price:'$99',desc:'For growing repair teams',featured:true,features:['Up to 5 technicians','Everything in Starter','Missed-call text-back','Abandoned booking recovery','Deposits + analytics']},
-        {name:'Business',price:'$199',desc:'For larger teams and locations',features:['Unlimited technicians','Multiple locations','Route-aware scheduling','Advanced automations','Priority support']},
-      ].map(plan=><article className={plan.featured?'priceCard featured':'priceCard'} key={plan.name}>{plan.featured&&<div className="popular">Most popular</div>}<h3>{plan.name}</h3><p>{plan.desc}</p><div className="price"><strong>{plan.price}</strong><span>/month</span></div>{checkout[plan.name] ? <a className={plan.featured?'button full':'ghostButton full'} href={checkout[plan.name]}>Start subscription</a> : <span className={plan.featured?'button full':'ghostButton full'} aria-disabled="true">Checkout activating</span>}<ul>{plan.features.map(f=><li key={f}><Check size={15}/>{f}</li>)}</ul></article>)}</div></section>
+      <section className="section shell" id="pricing"><div className="sectionIntro narrow"><div className="eyebrow">Planned pricing</div><h2>Explore the demo before subscribing.</h2></div><div className="pricingGrid">{[
+        {name:'Starter',featured:false,price:'$49',desc:'Planned for solo repair businesses',features:['Hosted booking after activation','Inline embed + widget','Private appointment cancellation','Calendar sync: not available','Email/SMS reminders: not available']},
+        {name:'Pro',featured:false,price:'$99',desc:'Planned for growing repair teams',features:['Technician availability setup','Missed-call text-back: setup required','Caller consent + opt-out controls','Abandoned booking recovery: not available','Deposits + analytics: not available']},
+        {name:'Business',featured:false,price:'$199',desc:'Planned for larger teams',features:['Operator-managed business setup','Multiple locations: not available','Route-aware scheduling: not available','Advanced automations: not available','Priority support: not available']},
+      ].map(plan=><article className={plan.featured?'priceCard featured':'priceCard'} key={plan.name}><h3>{plan.name}</h3><p>{plan.desc}</p><div className="price"><strong>{plan.price}</strong><span>/month</span></div><p className="planStatus">Subscriptions paused until activation and plan limits are ready.</p><a className="ghostButton full" href="/book/demo">Explore sample demo</a><ul>{plan.features.map(f=><li key={f} data-available={!f.includes("not available")}>{f.includes("not available")?<Clock3 size={15}/>:<Check size={15}/>} {f}</li>)}</ul></article>)}</div></section>
 
       <section className="cta"><div className="shell ctaInner"><div><div className="eyebrow light">Repair jobs should not wait for a callback.</div><h2>Let customers book while they are ready to hire.</h2></div><a className="button lightButton" href="/book/demo">Try the demo <ArrowRight size={17}/></a></div></section>
       <footer className="footer shell"><div className="brand"><span className="brandMark"><Wrench size={16}/></span><span>RepairSlot</span></div><a href="/repair-scheduling-software">Repair scheduling software</a><a href="/repair-booking-software">Repair booking software</a><a href="/resources">Resources and calculators</a></footer>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(softwareSchema)}}/>
+
     </main>
   );
 }

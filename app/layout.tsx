@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     default: 'RepairSlot | Repair Scheduling & Online Booking',
     template: '%s | RepairSlot',
   },
-  description: 'Online booking and scheduling software for repair businesses. Let customers book real service windows 24/7 and recover missed calls.',
+  description: 'Online booking and scheduling software for repair businesses. Explore the sample demo. Live booking and consent-based missed-call texts require business and provider activation.',
   keywords: [
     'repair scheduling software',
     'repair booking software',
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'RepairSlot | Online Booking for Repair Businesses',
-    description: 'Let repair customers choose real service windows and book jobs 24/7.',
+    description: 'Explore online booking for repair businesses. Live booking requires activation.',
   },
   robots: { index: true, follow: true },
 };

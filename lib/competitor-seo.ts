@@ -21,7 +21,7 @@ export const competitorPages: CompetitorPage[] = [
     bestFor:'Repair businesses comparing a full field-service platform with a lighter online-booking layer.',
     repairSlotAngle:'Choose RepairSlot when the immediate problem is turning website visitors, missed calls and after-hours demand into booked repair jobs without migrating the entire operation.',
     competitorStrengths:['Full field-service workflow','CRM, quotes and invoicing','Scheduling and routing','Online booking and Google Business Profile booking','Marketing and website tools'],
-    repairSlotStrengths:['Repair-first intake before showing times','Hosted page, inline embed and floating widget','Designed to work alongside existing software','Missed-call and abandoned-booking recovery focus','Simpler customer-facing booking layer'],
+    repairSlotStrengths:['Repair-first intake before showing times','Hosted page, inline embed and floating widget','Designed to work alongside existing software','Missed-call text-back requires provider setup and consent; abandoned recovery unavailable','Simpler customer-facing booking layer'],
     questions:[
       {q:'Is RepairSlot a full Jobber replacement?',a:'No. RepairSlot is intentionally focused on customer-facing repair intake, online booking and lead recovery. A business can keep Jobber or another back-office system and use RepairSlot as the booking layer.'},
       {q:'Which is better if I need invoicing, quoting and dispatch?',a:'A broad field-service platform such as Jobber is the better fit when you want those operations in one system. RepairSlot is aimed at businesses whose main need is adding a better online booking experience.'},
@@ -69,7 +69,7 @@ export const competitorPages: CompetitorPage[] = [
     bestFor:'Repair companies deciding between a generic appointment scheduler and a repair-specific booking workflow.',
     repairSlotAngle:'Use RepairSlot when the booking needs to understand what is broken, where the customer is located and how long the service may take before showing a time.',
     competitorStrengths:['General-purpose booking widgets','Team calendars','Payments and reminders','Many custom booking features','Works across many service industries'],
-    repairSlotStrengths:['Repair-specific intake','Service-area-first workflow','Different durations by repair type','Technician-aware service windows','Missed-call and abandoned-booking recovery'],
+    repairSlotStrengths:['Repair-specific intake','Service-area-first workflow','Different durations by repair type','Technician-aware service windows','Missed-call text-back requires provider setup and consent; abandoned recovery unavailable'],
     questions:[
       {q:'Why not use a generic appointment scheduler for repairs?',a:'Generic schedulers work well when appointments are interchangeable. Repair jobs often vary by symptom, equipment, location, duration and technician skill, which can make a repair-specific intake flow more useful.'},
       {q:'Does RepairSlot still provide a booking widget?',a:'Yes. The booking engine can be offered through a floating widget, an inline page or a hosted booking link.'},
