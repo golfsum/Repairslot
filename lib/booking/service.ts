@@ -41,7 +41,9 @@ export async function availableSlots(db:Queryable,b:any,serviceId:string,date:st
   const start=day.toZonedDateTime(b.timezone).toInstant().toString();
   const end=day.add({days:1}).toZonedDateTime(b.timezone).toInstant().toString();
   const windows=(await db.query('SELECT * FROM availability WHERE business_id=$1 AND starts_at<$3 AND ends_at>$2 ORDER BY starts_at LIMIT 200',[b.id,start,end])).rows;
-  const booked=(await db.query("SELECT resource_id,starts_at,ends_at FROM bookings WHERE business_id=$1 AND status='confirmed' AND starts_at<$3 AND ends_at>$2",[b.id,start,end])).rows;
+  // Starts belong to this local day, but appointments can finish on the next day.
+  const conflictEnd=new Date(Date.parse(end)+service.duration_minutes*60000).toISOString();
+  const booked=(await db.query("SELECT resource_id,starts_at,ends_at FROM bookings WHERE business_id=$1 AND status='confirmed' AND starts_at<$3 AND ends_at>$2",[b.id,start,conflictEnd])).rows;
   const result=new Map<string,{startsAt:string;endsAt:string;resourceId:string}>();
   for(const w of windows){
     const first=new Date(w.starts_at).getTime();const duration=service.duration_minutes*60000;

@@ -12,6 +12,8 @@ import { bookingReady, smsReady } from '../lib/booking/config';
 import type { Database } from '../lib/booking/db';
 import { verifiedParams, sendSMS } from '../lib/telephony/provider';
 import { inboundCall, consentCall, missedCall, incomingSMS, dispatchSMS, smsStatus } from '../lib/telephony/service';
+import { createTelephonyHandler } from '../lib/telephony/handler';
+import { POST as productionTelephonyPOST } from '../app/api/telephony/[kind]/route';
 
 Object.assign(process.env,{NODE_ENV:'test'});
 process.env.APP_ORIGIN='https://repairslot.test';
@@ -152,6 +154,53 @@ test('uncertain delivery is observable and never automatically resent; recipient
     let sends=0;const failing=async()=>{sends++;throw Error('Synthetic network timeout');};await dispatchSMS(f.db,id,failing,'https://repairslot.test',true);await dispatchSMS(f.db,id,failing,'https://repairslot.test',true);assert.equal(sends,1);assert.equal((await f.db.query('SELECT state FROM sms_outbox')).rows[0].state,'unknown');
     const call2={...f.call,CallSid:'CA'+'2'.repeat(32)};await inboundCall(f.db,call2);await consentCall(f.db,{...call2,Digits:'1'});assert.equal(await missedCall(f.db,{...call2,DialCallStatus:'no-answer'},true),undefined);
     await assert.rejects(()=>smsStatus(f.db,id,{To:'+15559999999',From:number,MessageSid:'SM'+'4'.repeat(32),MessageStatus:'delivered'}),/route mismatch/);
+  }finally{await f.close();}
+});
+test('signed voice routes forward non-textable callers without gathering consent or sending SMS',async()=>{
+  const f=await fixture();const previous=process.env.DATABASE_URL;
+  process.env.DATABASE_URL='unused-test-placeholder';process.env.TWILIO_AUTH_TOKEN='synthetic-token';process.env.TWILIO_ACCOUNT_SID=account;
+  try{
+    let sends=0;
+    const handler=createTelephonyHandler({database:()=>f.db,voiceReady:()=>true,messagingReady:()=>true,send:async()=>{sends++;throw Error('Non-textable caller must never reach transport');}});
+    async function callback(kind:string,params:Record<string,string>,signature?:string){
+      const url=`https://repairslot.test/api/telephony/${kind}`;
+      return handler(new Request(url,{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded','x-twilio-signature':signature ?? twilio.getExpectedTwilioSignature('synthetic-token',url,params)},body:new URLSearchParams(params).toString()}),{params:Promise.resolve({kind})});
+    }
+    for(const [i,from] of ['anonymous','restricted','unknown','client:alice','sip:alice@example.test'].entries()){
+      const call={...f.call,CallSid:'CA'+(i+1).toString(16).repeat(32),From:from};
+      const response=await callback('inbound',call);assert.equal(response.status,200);const body=await response.text();assert.ok(body.includes('<Number>+15550003333</Number>'));assert.equal(body.includes('<Gather'),false);
+      const consent=await callback('consent',{...call,Digits:'1'});assert.equal(consent.status,200);assert.ok((await consent.text()).includes('<Dial'));
+      assert.equal((await f.db.query('SELECT consent FROM voice_calls WHERE call_sid=$1',[call.CallSid])).rows[0].consent,false);
+      assert.equal((await callback('dial',{...call,DialCallStatus:'no-answer'})).status,200);
+      assert.equal((await callback('dial',{...call,DialCallStatus:'no-answer'})).status,200);
+    }
+    assert.equal(sends,0);assert.equal((await f.db.query('SELECT count(*)::int AS n FROM sms_contacts')).rows[0].n,0);assert.equal((await f.db.query('SELECT count(*)::int AS n FROM sms_outbox')).rows[0].n,0);
+    assert.equal((await callback('inbound',{...f.call,From:'anonymous'},'invalid')).status,403);
+    const valid=await callback('inbound',f.call);assert.ok((await valid.text()).includes('<Gather'));
+    const url='https://repairslot.test/api/telephony/inbound';
+    const request=new Request(url,{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded','x-twilio-signature':twilio.getExpectedTwilioSignature('synthetic-token',url,f.call)},body:new URLSearchParams(f.call).toString()});
+    assert.equal((await productionTelephonyPOST(request,{params:Promise.resolve({kind:'inbound'})})).status,503,'the public route still refuses live routing in tests');
+  }finally{if(previous===undefined)delete process.env.DATABASE_URL;else process.env.DATABASE_URL=previous;await f.close();}
+});
+test('overnight availability includes next-day conflicts and selects viable alternate capacity',async()=>{
+  const f=await fixture();try{
+    const b=await business(f.db,'alpha-shop');
+    const day=Temporal.Instant.from(f.start.toISOString()).toZonedDateTimeISO(b.timezone).toPlainDate();
+    const late=day.toZonedDateTime({timeZone:b.timezone,plainTime:'23:30'}).toInstant().toString();
+    const next=day.add({days:1}).toZonedDateTime({timeZone:b.timezone,plainTime:'00:30'}).toInstant().toString();
+    const end=day.add({days:1}).toZonedDateTime({timeZone:b.timezone,plainTime:'03:30'}).toInstant().toString();
+    await f.db.query('DELETE FROM availability WHERE business_id=$1',[f.a]);
+    await f.db.query('UPDATE services SET duration_minutes=120 WHERE business_id=$1 AND id=$2',[f.a,f.service]);
+    const shortService=randomUUID();await f.db.query("INSERT INTO services(business_id,id,name,duration_minutes) VALUES($1,$2,'Short overnight repair',60)",[f.a,shortService]);
+    await f.db.query('INSERT INTO availability(business_id,id,resource_id,starts_at,ends_at) VALUES($1,$2,$3,$4,$5)',[f.a,randomUUID(),f.resource,late,end]);
+    await book(f.db,'alpha-shop',{...f.input,serviceId:shortService,startsAt:next},secret);
+    const first=await availableSlots(f.db,b,f.service,day.toString());assert.equal(first.some(s=>s.startsAt===new Date(late).toISOString()),false);
+    await assert.rejects(()=>book(f.db,'alpha-shop',{...f.input,startsAt:late,idempotencyKey:randomUUID()},secret),e=>(e as any).status===409);
+    const alternate=randomUUID();await f.db.query("INSERT INTO resources(business_id,id,name) VALUES($1,$2,'Alternate technician')",[f.a,alternate]);
+    await f.db.query('INSERT INTO availability(business_id,id,resource_id,starts_at,ends_at) VALUES($1,$2,$3,$4,$5)',[f.a,randomUUID(),alternate,late,end]);
+    const slot=(await availableSlots(f.db,b,f.service,day.toString())).find(s=>s.startsAt===new Date(late).toISOString());assert.equal(slot?.resourceId,alternate);
+    const booked=await book(f.db,'alpha-shop',{...f.input,startsAt:late,idempotencyKey:randomUUID()},secret);assert.equal(booked.status,'confirmed');
+    assert.equal((await f.db.query('SELECT resource_id FROM bookings WHERE id=$1',[booked.id])).rows[0].resource_id,alternate);
   }finally{await f.close();}
 });
 test('persistent rate counters enforce limits across callers and reset after their window',async()=>{

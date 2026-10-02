@@ -10,7 +10,8 @@ export async function phoneBusiness(db:Queryable,number:string){
 }
 export async function inboundCall(db:Database,p:Record<string,string>){
   if(!sidPattern.test(p.CallSid||''))throw new AppError(400,'Invalid call identifier.');
-  phoneSchema.parse(p.From);
+  // Voice caller IDs may be anonymous/withheld. They must still reach the business.
+  if(typeof p.From!=='string' || !p.From || p.From.length>128)throw new AppError(400,'Invalid caller identifier.');
   const b=await phoneBusiness(db,p.To);
   if(!b.routing_verified || !b.forward_number)throw new AppError(503,'Phone routing is inactive.');
   await db.query('INSERT INTO voice_calls(call_sid,business_id,caller) VALUES($1,$2,$3) ON CONFLICT(call_sid) DO NOTHING',[p.CallSid,b.id,p.From]);
@@ -24,7 +25,7 @@ export async function consentCall(db:Database,p:Record<string,string>){
     await tx.query('SELECT id FROM businesses WHERE id=$1 FOR UPDATE',[b.id]);
     const call=(await tx.query("SELECT * FROM voice_calls WHERE call_sid=$1 AND business_id=$2 AND caller=$3 AND created_at>now()-interval '1 hour'",[p.CallSid,b.id,p.From])).rows[0];
     if(!call)throw new AppError(404,'Call not found.');
-    if(p.Digits==='1' && b.sms_enabled){
+    if(p.Digits==='1' && b.sms_enabled && phoneSchema.safeParse(p.From).success){
       await tx.query('UPDATE voice_calls SET consent=true WHERE call_sid=$1',[p.CallSid]);
       await tx.query(`INSERT INTO sms_contacts(business_id,phone,consent_at,consent_source) VALUES($1,$2,now(),'voice-keypress-v1') ON CONFLICT(business_id,phone) DO UPDATE SET consent_at=now(),consent_source='voice-keypress-v1',updated_at=now() WHERE sms_contacts.opted_out=false`,[b.id,p.From]);
     }
@@ -40,6 +41,8 @@ export async function missedCall(db:Database,p:Record<string,string>,enabled:boo
     if(!event)return (await tx.query('SELECT id FROM sms_outbox WHERE call_sid=$1 AND state=\'pending\'',[p.CallSid])).rows[0]?.id as string|undefined;
     await tx.query('UPDATE voice_calls SET status=$2 WHERE call_sid=$1',[p.CallSid,p.DialCallStatus||'unknown']);
     if(!['no-answer','busy','failed'].includes(p.DialCallStatus))return;
+    // Non-textable caller IDs never enter the SMS contact or outbox path.
+    if(!phoneSchema.safeParse(p.From).success)return;
     const contact=(await tx.query('SELECT * FROM sms_contacts WHERE business_id=$1 AND phone=$2',[b.id,p.From])).rows[0];
     const recent=(await tx.query("SELECT count(*)::int AS count FROM sms_outbox WHERE business_id=$1 AND created_at>now()-interval '24 hours' AND state<>'suppressed'",[b.id])).rows[0].count;
     const callerRecent=(await tx.query("SELECT id FROM sms_outbox WHERE business_id=$1 AND phone=$2 AND created_at>now()-interval '24 hours' AND state<>'suppressed' LIMIT 1",[b.id,p.From])).rows.length;
@@ -72,7 +75,7 @@ export async function dispatchSMS(db:Database,id:string,send:SendSMS,publicOrigi
       const b=(await tx.query('SELECT * FROM businesses WHERE id=$1 FOR UPDATE',[owner.business_id])).rows[0];
       const message=(await tx.query('SELECT * FROM sms_outbox WHERE id=$1 FOR UPDATE',[id])).rows[0];
       const contact=(await tx.query('SELECT * FROM sms_contacts WHERE business_id=$1 AND phone=$2',[b.id,message.phone])).rows[0];
-      if(!enabled || !b.sms_enabled || !b.booking_enabled || !b.routing_verified || contact?.opted_out || !contact?.consent_at){await tx.query("UPDATE sms_outbox SET state='suppressed',error_code='inactive-or-opted-out',updated_at=now() WHERE id=$1",[id]);return;}
+      if(!enabled || !phoneSchema.safeParse(message.phone).success || !b.sms_enabled || !b.booking_enabled || !b.routing_verified || contact?.opted_out || !contact?.consent_at){await tx.query("UPDATE sms_outbox SET state='suppressed',error_code='inactive-or-opted-out',updated_at=now() WHERE id=$1",[id]);return;}
       const body=`${b.name}: Sorry we missed your call. Book a repair: ${publicOrigin}/book/${b.slug}. Reply STOP to opt out.`;
       const result=await send({from:b.phone_number,to:message.phone,body,statusCallback:`${publicOrigin}/api/telephony/sms-status?id=${id}`});
       await tx.query("UPDATE sms_outbox SET state='accepted',provider_sid=$2,updated_at=now() WHERE id=$1",[id,result.sid]);
