@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ArrowRight, CalendarCheck, Check, Clock3, Code2, ExternalLink, Globe2, MonitorSmartphone, PhoneMissed, Play, ShieldCheck, Wrench } from 'lucide-react';
+import { ArrowRight, CalendarCheck, Check, Clock3, Code2, ExternalLink, Globe2, MonitorSmartphone, PhoneMissed, ShieldCheck, Wrench } from 'lucide-react';
 
 const repairTypes = [
   ['Appliance Repair','/appliance-repair-scheduling-software'],
@@ -43,11 +43,11 @@ export default function Home() {
         </div>
 
         <div className="heroCard" id="demo">
-          <div className="demoHeader"><div><strong>Sunset Appliance Repair</strong><span>Live booking preview</span></div><span className="stepPill">{Math.min(step,3)}/3</span></div>
+          <div className="demoHeader"><div><strong>Sunset Appliance Repair</strong><span>Interactive sample · No real booking</span></div><span className="stepPill">{Math.min(step,3)}/3</span></div>
           {!booked && step===1 && <div className="demoBody"><label>What needs repair?</label><div className="choiceGrid">{services.map(item=><button key={item} onClick={()=>setService(item)} className={service===item?'choice active':'choice'}>{item}</button>)}</div><button className="button full" onClick={()=>setStep(2)}>Continue <ArrowRight size={17}/></button></div>}
-          {!booked && step===2 && <div className="demoBody"><label>Where should the technician go?</label><input defaultValue="7421 E Broadway Blvd, Tucson, AZ"/><div className="microcopy"><ShieldCheck size={15}/> Service area verified</div><button className="button full" onClick={()=>setStep(3)}>See available times <ArrowRight size={17}/></button></div>}
-          {!booked && step===3 && <div className="demoBody"><label>Choose a real service window</label><div className="choiceGrid">{slots.map(item=><button key={item} onClick={()=>setSlot(item)} className={slot===item?'choice active':'choice'}>{item}</button>)}</div><button className="button full" onClick={()=>setBooked(true)}>Book this slot <CalendarCheck size={17}/></button></div>}
-          {booked && <div className="successState"><span className="successIcon"><Check size={24}/></span><h3>Repair booked</h3><p>{service}</p><strong>{slot}</strong><button className="ghostButton" onClick={()=>{setBooked(false);setStep(1)}}>Restart demo</button></div>}
+          {!booked && step===2 && <div className="demoBody"><label>Where should the technician go?</label><input aria-label="Sample service address" readOnly defaultValue="7421 E Broadway Blvd, Tucson, AZ"/><div className="microcopy"><ShieldCheck size={15}/> Sample address. No address verification</div><button className="button full" onClick={()=>setStep(3)}>See available times <ArrowRight size={17}/></button></div>}
+          {!booked && step===3 && <div className="demoBody"><label>Choose a sample service window</label><div className="choiceGrid">{slots.map(item=><button key={item} onClick={()=>setSlot(item)} className={slot===item?'choice active':'choice'}>{item}</button>)}</div><button className="button full" onClick={()=>setBooked(true)}>Finish sample booking <CalendarCheck size={17}/></button></div>}
+          {booked && <div className="successState"><span className="successIcon"><Check size={24}/></span><h3>Sample booking complete</h3><p>No real appointment was created.</p><p>{service}</p><strong>{slot}</strong><button className="ghostButton" onClick={()=>{setBooked(false);setStep(1)}}>Restart demo</button></div>}
         </div>
       </section>
 
@@ -71,7 +71,10 @@ export default function Home() {
 
       <section className="section shell" id="how"><div className="sectionIntro"><div className="eyebrow">How it works</div><h2>Built around a repair job, not an empty calendar.</h2><p>RepairSlot asks what is broken first, then shows only times that fit the job, service area and technician availability.</p></div><div className="steps">{[['1','Customer describes the repair','Use repair-specific questions instead of a generic meeting type.'],['2','RepairSlot finds valid availability','Match duration, hours, technician availability and service area.'],['3','The job gets booked','Confirm instantly, send reminders and recover abandoned bookings.']].map(([n,t,x])=><article className="step" key={n}><span>{n}</span><h3>{t}</h3><p>{x}</p></article>)}</div></section>
 
-      <section className="section videoSection"><div className="shell videoCard"><div><div className="eyebrow lightBlue">60-second product tour</div><h2>See the whole customer journey.</h2><p>From “my refrigerator stopped cooling” to a confirmed service window, plus how the business adds the hosted page, inline embed and widget.</p><div className="videoNote">Narration spec: warm, natural U.S. voice, conversational pacing, no synthetic announcer tone.</div></div><div className="videoPlaceholder"><span className="playCircle"><Play fill="currentColor"/></span><strong>RepairSlot product tour</strong><small>Voice-over version will sit here once the recorded narration asset is available.</small></div></div></section>
+      <section className="section tourSection" aria-labelledby="tour-title"><div className="shell tourLayout">
+        <div className="tourCopy"><div className="eyebrow lightBlue">Explore the booking demo</div><h2 id="tour-title">Take a repair request from problem to service window.</h2><p>Try the customer experience for a sample appliance repair business. Choose a repair, review a sample address, and pick an appointment window.</p><ol className="tourSteps"><li><span>1</span>Choose what needs repair</li><li><span>2</span>Review the service address</li><li><span>3</span>Pick a sample service window</li></ol><a className="button" href="/book/demo">Try the demo <ArrowRight size={17}/></a><p className="tourDisclaimer">No signup needed. Sample data only. No real appointment is created.</p></div>
+        <div className="tourPreview"><div className="tourPreviewBar"><Wrench size={16}/><strong>Sunset Appliance Repair</strong><span>Sample</span></div><div className="tourPreviewBody"><div className="eyebrow">Booking preview</div><h3>A service window, selected.</h3><dl className="tourSummary"><div><dt>Repair</dt><dd>Refrigerator not cooling</dd></div><div><dt>Service window</dt><dd><Clock3 size={16}/>Tomorrow, 8–10 AM</dd></div></dl><div className="tourSampleNote"><CalendarCheck size={22}/><div><strong>See the confirmation step</strong><p>Walk through the demo to see how a customer finishes booking.</p></div></div><a href="/book/demo" className="ghostButton full">Open interactive sample <ArrowRight size={16}/></a></div></div>
+      </div></section>
 
       <section className="section industrySection"><div className="shell"><div className="sectionIntro narrow"><div className="eyebrow">Repair-specific templates</div><h2>Start with the repairs you already do.</h2></div><div className="industryGrid">{repairTypes.map(([type,href])=><a className="industry" href={href} key={type}><Wrench size={18}/><span>{type}</span><ArrowRight size={15}/></a>)}</div></div></section>
 
